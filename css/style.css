@@ -1,0 +1,75 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+.track {
+    left: 0;
+    top: 0;
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    background: url("../image/track.jpeg") repeat-y left top;
+}
+.car {
+    position: absolute;
+    left:145px;
+    bottom: 10px;
+    background-image: url("../image/car.png");
+    background-size: 100% 100%;
+    height: 40px;
+    width: 25px;
+}
+.obstacleCar1 {
+    position: relative;
+    bottom:0px;
+    background: url("../image/car.png");
+    background-size: 100% 100%;
+    height: 40px;
+    width: 25px;
+}
+.obstacleCar2 {
+    position: relative;
+    bottom:0px;
+    background: url("../image/car2.png");
+    background-size: 100% 100%;
+    height: 40px;
+    width: 25px;
+}
+.score{
+    position:fixed;
+    border: 1px solid black;
+    height:10%;
+    width: 100px;
+    top:0px;
+    left:500px;
+}
+
+.life{
+    position:fixed;
+    height:10%;
+    width: 200px;
+    top:200px;
+    left:500px;
+}
+.timer{
+    position:fixed;
+    height:10%;
+    width: 200px;
+    top:300px;
+    left:500px;
+}
+.blink {
+  animation: blink-animation .05s steps(5, start) 10;
+  -webkit-animation: blink-animation .05s steps(5, start) 10;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
