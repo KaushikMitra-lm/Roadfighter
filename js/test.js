@@ -9,6 +9,16 @@ var racingManiac = {
     leftCarInterval: 5,
     rightCarInterval: 10,
     shiftOnKey: 1,
+    obscar1LeftLimit: 80,
+    obscar1RightLimit: 103,
+    obscar2LeftLimit: 130,
+    obscar2RightLimit: 150,
+    obscar3LeftLimit: 178,
+    obscar3RightLimit: 210,
+    obscar1: "obstacleCar1",
+    obscar2: "obstacleCar2",
+    obscar3: "obstacleCar3",
+    counter: 5,
 
     init: function () {
         racingManiac.carReset();
@@ -16,13 +26,13 @@ var racingManiac = {
         racingManiac.carPosition = $('.car').position();
         $(".displayWindow > span").remove();
         racingManiac.lifeCreate();
-        racingManiac.randomLeftFor1stObstacle(80, 103);
-        racingManiac.randomLeftFor2ndObstacle(130, 150);
-        racingManiac.randomLeftFor3rdObstacle(178, 210);
+        racingManiac.randomLeftForObstacle(racingManiac.obscar1LeftLimit, racingManiac.obscar1RightLimit, racingManiac.obscar1);
+        racingManiac.randomLeftForObstacle(racingManiac.obscar2LeftLimit, racingManiac.obscar2RightLimit, racingManiac.obscar2);
+        racingManiac.randomLeftForObstacle(racingManiac.obscar3LeftLimit, racingManiac.obscar3RightLimit, racingManiac.obscar3);
         racingManiac.setIntervalofTrack = setInterval(racingManiac.trackMove, 1);
-        racingManiac.setIntervalofObstacleCar1 = setInterval(racingManiac.obstacleCar1Move, racingManiac.leftCarInterval);
-        racingManiac.setIntervalofObstacleCar2 = setInterval(racingManiac.obstacleCar2Move, racingManiac.rightCarInterval);
-        racingManiac.setIntervalofObstacleCar3 = setInterval(racingManiac.obstacleCar3Move, racingManiac.rightCarInterval);
+        racingManiac.setIntervalofObstacleCar1 = setInterval(racingManiac.setIntervalCallForObs1, racingManiac.leftCarInterval);
+        racingManiac.setIntervalofObstacleCar2 = setInterval(racingManiac.setIntervalCallForObs2, racingManiac.rightCarInterval);
+        racingManiac.setIntervalofObstacleCar3 = setInterval(racingManiac.setIntervalCallForObs3, racingManiac.rightCarInterval);
         racingManiac.setIntervalCollisionDetect = setInterval(racingManiac.collisionCheck, 1);
         $(document).keydown(racingManiac.moveCarOnKeypress);
         $(document).keyup(racingManiac.clearKey);
@@ -32,6 +42,15 @@ var racingManiac = {
         } else {
             alert("Sorry, your browser doesn't support Device Orientation");
         }
+    },
+    setIntervalCallForObs1: function () {
+        racingManiac.obstacleCarMove(racingManiac.obscar1, 1, racingManiac.obscar1LeftLimit, racingManiac.obscar1RightLimit);
+    },
+    setIntervalCallForObs2: function () {
+        racingManiac.obstacleCarMove(racingManiac.obscar2, 2, racingManiac.obscar2LeftLimit, racingManiac.obscar2RightLimit);
+    },
+    setIntervalCallForObs3: function () {
+        racingManiac.obstacleCarMove(racingManiac.obscar3, 3, racingManiac.obscar3LeftLimit, racingManiac.obscar3RightLimit);
     },
     deviceOrientationListener: function (event) {
         var gammaValue = Math.ceil(event.gamma);
@@ -52,30 +71,6 @@ var racingManiac = {
             imageAppend = '<img src="image/life.png" height="42" width="42">';
             $(".life").append(imageAppend);
         }
-    },
-    randomLeftFor1stObstacle: function (min, max) {
-        var createCar;
-        createCar = '<div class="obstacleCar1"></div>';
-        $(".track").append(createCar);
-        $(".obstacleCar1").css({
-            left: Math.floor(Math.random() * (max - min + 1) + min) + "px"
-        })
-    },
-    randomLeftFor2ndObstacle: function (min, max) {
-        var createCar;
-        createCar = '<div class="obstacleCar2"></div>';
-        $(".track").append(createCar);
-        $(".obstacleCar2").css({
-            left: Math.floor(Math.random() * (max - min + 1) + min) + "px"
-        })
-    },
-    randomLeftFor3rdObstacle: function (min, max) {
-        var createCar;
-        createCar = '<div class="obstacleCar3"></div>';
-        $(".track").append(createCar);
-        $(".obstacleCar3").css({
-            left: Math.floor(Math.random() * (max - min + 1) + min) + "px"
-        })
     },
     trackMove: function () {
         if (racingManiac.position < 50000) {
@@ -125,53 +120,27 @@ var racingManiac = {
         racingManiac.score += 1;
         var scoreAppend = "Score:<br>" + racingManiac.score;
         $(".score").html(scoreAppend);
-        //        if ($('.obstacleCar1').length) {
-        //            racingManiac.collision($(".obstacleCar1"), $(".car"));
-        //        }
-        //        if ($('.obstacleCar2').length) {
-        //            racingManiac.collision($(".obstacleCar2"), $(".car"));
-        //        }
-        //        if ($('.obstacleCar3').length) {
-        //            racingManiac.collision($(".obstacleCar3"), $(".car"));
-        //        }
     },
-
-
-    obstacleCar1Move: function () {
-        $(".obstacleCar1").css({
-            "top": racingManiac.positionCar1 + "px"
+    randomLeftForObstacle: function (min, max, obs) {
+        var createCar;
+        createCar = '<div class="' + obs + '"></div>';
+        $(".track").append(createCar);
+        $('.' + obs).css({
+            left: Math.floor(Math.random() * (max - min + 1) + min) + "px"
+        })
+    },
+    obstacleCarMove: function (obs, number, min, max) {
+        var pos = racingManiac["positionCar" + number];
+        $('.' + obs).css({
+            "top": pos + "px"
         });
-        if (racingManiac.positionCar1 >= racingManiac.windowHeight) {
-            racingManiac.positionCar1 = 0;
-            $(".obstacleCar1").remove();
-            racingManiac.randomLeftFor1stObstacle(80, 103);
+        console.log(pos)
+        if (pos >= racingManiac.windowHeight) {
+            racingManiac["positionCar" + number] = 0;
+            $('.' + obs).remove();
+            racingManiac.randomLeftForObstacle(min, max, obs);
         }
     },
-
-
-    obstacleCar2Move: function () {
-        $(".obstacleCar2").css({
-            "top": racingManiac.positionCar2 + "px"
-        });
-        if (racingManiac.positionCar2 >= racingManiac.windowHeight) {
-
-            $(".obstacleCar2").remove();
-            racingManiac.positionCar2 = 0;
-            racingManiac.randomLeftFor2ndObstacle(130, 150);
-        }
-    },
-    obstacleCar3Move: function () {
-        $(".obstacleCar3").css({
-            "top": racingManiac.positionCar3 + "px"
-        });
-        if (racingManiac.positionCar3 >= racingManiac.windowHeight) {
-
-            $(".obstacleCar3").remove();
-            racingManiac.positionCar3 = 0;
-            racingManiac.randomLeftFor3rdObstacle(178, 210);
-        }
-    },
-
     carReset: function () {
         $(".car").css({
             left: "146px",
@@ -179,7 +148,6 @@ var racingManiac = {
         })
     },
     collision: function ($div1, $div2) {
-        //$(".car").removeClass("accidentAnimation");
         var obsCarLeft = $div1.position().left,
             obsCarTop = $div1.position().top,
             obsCarHeight = $div1.outerHeight(true),
@@ -198,7 +166,6 @@ var racingManiac = {
             racingManiac.attempt -= 1;
             $(".life").children().eq(0).remove();
             racingManiac.clearCollision();
-            //            $(".car").addClass("blink");
             if (racingManiac.attempt <= 0) {
                 $(".displayWindow").css({
                     "background-image": "url(../streetFighter/image/gameover.png)"
@@ -206,7 +173,6 @@ var racingManiac = {
                 racingManiac.gameOver();
             }
             $div1.remove();
-            //$(".car").removeClass("blink");
         }
 
     },
@@ -298,20 +264,15 @@ var racingManiac = {
 
 
     },
+    preventCollision: function () {
+        racingManiac.setIntervalCollisionDetect = setInterval(racingManiac.collisionCheck, 1);
+    },
     clearCollision: function () {
         clearInterval(racingManiac.setIntervalCollisionDetect);
-        setTimeout(function () {
-            racingManiac.setIntervalCollisionDetect = setInterval(racingManiac.collisionCheck, 1);
-        }, 2000);
-    }
-}
-
-
-$(document).ready(function () {
-
-    $(".displayWindow").show();
-    $(".resetCar").prop("disabled", false);
-    $(".resetCar").on("click", function (event) {
+        setTimeout(racingManiac.preventCollision, 2000);
+    },
+    startOperation: function () {
+        racingManiac.launchIntoFullscreen(document.getElementById("main_window"));
         navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
         $('.track').css("background-image", "url(../streetFighter/image/track.jpeg)");
         $(".resetCar").prop("disabled", true);
@@ -323,24 +284,30 @@ $(document).ready(function () {
         racingManiac.positionCar3 = 0;
         racingManiac.score = 0;
         racingManiac.levelCounter = 1;
-        //racingManiac.launchIntoFullscreen(document.getElementById("main_window"));
-        window.addEventListener("load", function () {
-            window.scrollTo(0, 0);
-        });
+        setTimeout(racingManiac.countDown, 1);
+    },
+    countDown: function () {
+        racingManiac.interval = setInterval(racingManiac.countDownTimer, 1000);
+    },
+    countDownTimer: function () {
+        $('.countDown').html('<p>' + racingManiac.counter + '</p>');
+        racingManiac.counter--;
+        if (racingManiac.counter === -1) {
+            //Start Game
+            racingManiac.counter = 5;
+            clearInterval(racingManiac.interval);
+            $('.countDown').empty();
+            racingManiac.init();
+        }
+    },
+    gameStart: function () {
+        $(".displayWindow").show();
+        $(".resetCar").prop("disabled", false);
+        $(".resetCar").on("click",
+            racingManiac.startOperation);
 
-        setTimeout(function () {
-            var counter = 5;
-            var interval = setInterval(function () {
-                $('.countDown').html('<p>' + counter + '</p>');
-                counter--;
-                if (counter === -1) {
-                    //Start Game
-                    clearInterval(interval);
-                    $('.countDown').empty();
-                    racingManiac.init();
+    }
+}
 
-                }
-            }, 1000);
-        }, 1);
-    });
-})
+
+$(document).ready(racingManiac.gameStart)
